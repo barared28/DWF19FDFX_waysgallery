@@ -1,0 +1,32 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+button {
+  font-family: "Ubuntu";
+}
+
+.font-85 {
+  font-size: 85px;
+}
+
+.min-w-100 {
+  min-width: 100px;
+}
+
+.bg-modal {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.m-title {
+  margin-top: -20px;
+}
+.dropdown:focus .dropdown-menu {
+  display: block;
+}
+.dropdown-menu {
+  margin-left: -30px;
+}
