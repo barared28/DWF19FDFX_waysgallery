@@ -6,34 +6,19 @@ function DropzoneUpload({ files, setFiles }) {
   const [showAlert, setShowAlert] = useState(false);
   const onDrop = useCallback(
     (acceptedFiles) => {
-      let check = false;
-      for (let i = 0; i < files.length; i++) {
-        if (files[i] === null) {
-          const fileNew = acceptedFiles.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          );
-          setFiles((prev) => {
-            prev[i] = fileNew[0];
-            return prev;
-          });
-          check = true;
-          break;
-        }
-      }
-      if (check) {
-        return;
-      }
       if (files.length < 4) {
-        setFiles((prev) => {
-          const fileNew = acceptedFiles.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          );
-          return [...prev, ...fileNew];
-        });
+        if (acceptedFiles.length + files.length  < 5) {
+          setFiles((prev) => {
+            const fileNew = acceptedFiles.map((file) =>
+              Object.assign(file, {
+                preview: URL.createObjectURL(file),
+              })
+            );
+            return [...prev, ...fileNew];
+          });
+        } else {
+          setShowAlert(true);
+        }
       } else {
         setShowAlert(true);
       }
@@ -46,11 +31,8 @@ function DropzoneUpload({ files, setFiles }) {
   });
   const onRemove = (index) => {
     setFiles((prev) => {
-      return prev.map((file, i) => {
-        if (i !== index) {
-          return file;
-        }
-        return null;
+      return prev.filter((element, i) => {
+        return element !== undefined && i !== index;
       });
     });
   };
@@ -58,20 +40,25 @@ function DropzoneUpload({ files, setFiles }) {
     <>
       <div
         {...getRootProps()}
-        className={`border-4 py-32 border-dashed flex justify-center focus:outline-none ${
+        className={`border-4 py-32 border-dashed flex flex-col justify-center focus:outline-none cursor-pointer hover:border-gray-500 hover:bg-gray-100 ${
           isDragActive && "bg-secondary opacity-40"
         }`}
       >
-        <input {...getInputProps()} className="" />
-        {isDragActive ? (
-          <p className="text-white font-bold text-2xl">
-            Drop the images here ...
-          </p>
-        ) : (
-          <p className="text-gray-200 font-bold text-2xl">
-            Drag 'n' drop some images here, or click to select images
-          </p>
-        )}
+        <div className="mx-auto">
+          <i className="fas fa-cloud-upload-alt text-gray-400 fa-7x"></i>
+        </div>
+        <div className="text-center px-10">
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p className="text-white font-bold text-2xl">
+              Drop the images here ...
+            </p>
+          ) : (
+            <p className="text-gray-400 font-bold text-2xl">
+              Drag & drop or click to select images
+            </p>
+          )}
+        </div>
       </div>
       <div className="w-full flex space-x-5 px-5 mt-5">
         <PreviewBox file={files[0]} remove={() => onRemove(0)} />
@@ -80,7 +67,12 @@ function DropzoneUpload({ files, setFiles }) {
         <PreviewBox file={files[3]} remove={() => onRemove(3)} />
       </div>
       {showAlert && (
-        <Modal show={showAlert} close={() => setShowAlert(false)}>
+        <Modal
+          show={showAlert}
+          close={() => setShowAlert(false)}
+          shadow={false}
+          popup={true}
+        >
           <h1 className="font-bold text-red-500">
             Already Reach Maximum Images
           </h1>
@@ -94,7 +86,7 @@ const PreviewBox = ({ file, remove }) => {
   return (
     <>
       {file ? (
-        <div className="w-1/4 h-32 border-4 border-dashed">
+        <div className="w-1/4 h-32 border-4 border-dashed hover:border-gray-500">
           <button
             className="absolute ml-3 mt-2 bg-red-400 px-2 rounded-full text-white focus:outline-none hover:bg-red-500"
             onClick={remove}
@@ -110,7 +102,7 @@ const PreviewBox = ({ file, remove }) => {
         </div>
       ) : (
         <div className="w-1/4 h-32 border-4 border-dashed flex justify-center pb-5">
-          <h1 className="text-9xl text-gray-200 self-center">+</h1>
+          <h1 className="text-9xl text-gray-300 self-center">+</h1>
         </div>
       )}
     </>

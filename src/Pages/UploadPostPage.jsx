@@ -5,7 +5,7 @@ function UploadPostPage() {
   const [files, setFiles] = useState([]);
   console.log(files);
   return (
-    <div className="px-32 flex justify-between">
+    <div className="px-32 flex justify-between mb-16">
       <div className="w-3/5">
         <DropzoneUpload files={files} setFiles={setFiles} />
       </div>
