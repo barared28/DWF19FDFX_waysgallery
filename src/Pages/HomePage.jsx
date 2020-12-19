@@ -16,8 +16,7 @@ function HomePage() {
       <div className="px-32">
         <div className="flex justify-between">
           <div>
-            <label htmlFor="filter"></label>
-            <select id="filter">
+            <select id="filter" className="bg-gray-200 px-3 py-1 rounded focus:outline-none cursor-pointer hover:bg-gray-300">
               <option value="today" defaultValue>
                 Today
               </option>

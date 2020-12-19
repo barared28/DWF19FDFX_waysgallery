@@ -54,6 +54,9 @@ export const getPosts = () => {
   return API.get(url).then((res) => {
     return res.data.data.posts.map((post) => {
       const img = new Image();
+      if (!post.photo[0].image) {
+        return null;
+      }
       img.src = `${baseURL}${post.photo[0].image}`;
       if (!img.width && !img.height) {
         return {
@@ -88,4 +91,53 @@ export const getProfileById = ({ queryKey }) => {
   const id = queryKey[1];
   const url = `/user/${id}`;
   return API.get(url).then((res) => res.data.data);
+};
+
+export const uploadPost = (body) => {
+  const url = "/post";
+  return API.post(url, body, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then((res) => res)
+    .catch((err) => console.log(err));
+};
+
+export const uploadArt = (body) => {
+  const url = "/upload-arts";
+  return API.post(url, body, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then((res) => res)
+    .catch((err) => console.log(err));
+};
+
+export const editProfile = (body) => {
+  const url = "/user";
+  const config = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
+  return API.patch(url, body, config)
+    .then((res) => res)
+    .catch((err) => console.log(err));
+};
+
+export const addHire = (body) => {
+  const url = "/hired";
+  return API.post(url, body);
+};
+
+export const getMyOrder = () => {
+  const url = "/my-order";
+  return API.get(url).then((res) => res.data.data.order);
+};
+
+export const getMyOffer = () => {
+  const url = "/my-offer";
+  return API.get(url).then((res) => res.data.data.offer);
 };

@@ -9,6 +9,10 @@ import Navbar from "./Components/Navbar";
 import DetailPostPage from "./Pages/DetailPostPage";
 import ProfilePage from "./Pages/ProfilePage";
 import UploadPostPage from "./Pages/UploadPostPage";
+import EditProfilePage from "./Pages/EditProfilePage";
+import HiredPage from "./Pages/HiredPage";
+import SendProjectPage from "./Pages/SendProjectPage";
+import MyOrder from "./Pages/MyOrder";
 // import functional
 import { reloadApi } from "./Api";
 
@@ -35,6 +39,14 @@ function App() {
               <Route exact path="/user/:id" component={ProfilePage} />
               <Route exact path="/my-profile" component={ProfilePage} />
               <Route exact path="/upload-post" component={UploadPostPage} />
+              <Route exact path="/edit-profile" component={EditProfilePage} />
+              <Route exact path="/hire/:id" component={HiredPage} />
+              <Route exact path="/my-order" component={MyOrder} />
+              <Route
+                exact
+                path="/send-project/:id"
+                component={SendProjectPage}
+              />
               <ReactQueryDevtools />
             </>
           ) : (

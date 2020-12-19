@@ -2,3 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  th,
+  td {
+    @apply px-3 py-2;
+  }
+  table {
+    @apply w-full table-auto;
+  }
+  table,
+  th,
+  td {
+    @apply border-2 border-collapse;
+  }
+  th {
+      @apply text-left bg-gray-300
+  }
+}

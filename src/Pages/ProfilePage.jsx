@@ -4,6 +4,8 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "react-query";
 // import functional
 import { getMyProfile, baseURL, getProfileById } from "../Api";
+// import assets
+import profileImage from "../Images/profile.png";
 
 function ProfilePage() {
   const { id } = useParams();
@@ -19,7 +21,11 @@ function ProfilePage() {
             <div className="flex flex-col mt-10">
               <div>
                 <img
-                  src={`${baseURL}${data.profile.avatar}`}
+                  src={
+                    data.profile.avatar === "default"
+                      ? profileImage
+                      : `${baseURL}${data.profile.avatar}`
+                  }
                   alt="profile"
                   className="w-32 h-32 rounded-full border-2 border-primary object-cover"
                 />
@@ -34,14 +40,18 @@ function ProfilePage() {
                     <button className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold">
                       Follow
                     </button>
-                    <button className="min-w-100 bg-primary text-white rounded py-1 font-semibold">
-                      Hire
-                    </button>
+                    <Link to={`/hire/${data.id}`}>
+                      <button className="min-w-100 bg-primary text-white rounded py-1 font-semibold">
+                        Hire
+                      </button>
+                    </Link>
                   </div>
                 ) : (
-                  <button className="px-5 bg-primary text-white rounded py-1 font-semibold">
-                    Edit Profile
-                  </button>
+                  <Link to="/edit-profile">
+                    <button className="px-5 bg-primary text-white rounded py-1 font-semibold">
+                      Edit Profile
+                    </button>
+                  </Link>
                 )}
               </div>
             </div>

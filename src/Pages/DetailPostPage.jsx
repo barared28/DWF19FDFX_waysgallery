@@ -62,7 +62,8 @@ function DetailPostPage() {
                       src={`${baseURL}${photo.image}`}
                       key={photo.id}
                       alt={photo.id}
-                      className="w-32 rounded"
+                      className="w-32 h-24 object-cover rounded cursor-pointer border-2 border-primary opacity-80 hover:opacity-100"
+                      onClick={() => setMainImage(photo.image)}
                     />
                   );
                 })}
