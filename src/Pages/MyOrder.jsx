@@ -3,14 +3,21 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 // import components
 import TableOrder from "../Components/Table/TableOrder";
-import TableOffer from "../Components/Table/TableOrder";
+import TableOffer from "../Components/Table/TableOffer";
+import Loader from "../Components/Load/Loader";
 // import functional
 import { getMyOrder, getMyOffer } from "../Api";
 
 function MyOrder() {
   const [table, setTable] = useState("order");
-  const { data: orderData } = useQuery("my-order", getMyOrder);
-  const { data: offerData } = useQuery("my-offer", getMyOffer);
+  const { data: orderData, isLoading: loadingOrder } = useQuery(
+    "my-order",
+    getMyOrder
+  );
+  const { data: offerData, isLoading: loadingOffer } = useQuery(
+    "my-offer",
+    getMyOffer
+  );
   return (
     <>
       <div className="px-32">
@@ -27,8 +34,13 @@ function MyOrder() {
           </select>
         </div>
         <div className="mt-16">
-          {table === "order" && orderData && <TableOrder data={orderData} />}
+          {table === "order" && orderData && <TableOrder data={orderData}/>}
           {table === "offer" && offerData && <TableOffer data={offerData} />}
+          {loadingOrder && loadingOffer && (
+            <div className="flex justify-center">
+              <Loader />
+            </div>
+          )}
         </div>
       </div>
     </>

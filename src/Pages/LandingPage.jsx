@@ -34,13 +34,13 @@ function LandingPage() {
         </div>
         <div className="space-x-4 mt-5">
           <button
-            className="min-w-100 bg-primary text-white rounded py-1 font-semibold"
+            className="min-w-100 bg-primary hover:bg-bold text-white rounded py-1 font-semibold"
             onClick={() => setShowModal({ login: false, register: true })}
           >
             Join Now
           </button>
           <button
-            className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold"
+            className="min-w-100 bg-gray-300 hover:bg-gray-400 text-black rounded py-1 font-semibold"
             onClick={() => setShowModal({ login: true, register: false })}
           >
             Login

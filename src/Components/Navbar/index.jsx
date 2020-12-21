@@ -1,12 +1,17 @@
 // import modules
 import React from "react";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "react-query";
 // import Components
 import Dropdown from "./Dropdown";
+import { baseURL } from "../../Api";
 // import assets
+import profile from "../../Images/profile.png";
 import logo from "../../Images/logo.png";
 
 function Navbar() {
+  const cache = useQueryClient();
+  const data = cache.getQueryData("user");
   return (
     <div className="flex justify-between px-32 py-3 border-b-2 mb-6">
       <div>
@@ -27,7 +32,11 @@ function Navbar() {
         <div>
           <Dropdown>
             <img
-              src={logo}
+              src={
+                data.profile.avatar !== "default"
+                  ? `${baseURL}${data.profile.avatar}`
+                  : profile
+              }
               alt="profile"
               className="w-16 h-16 rounded-full border-2 border-primary object-cover"
             />

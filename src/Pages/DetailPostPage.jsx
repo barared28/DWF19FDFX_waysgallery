@@ -5,15 +5,18 @@ import { useQuery } from "react-query";
 // import functional
 import { getPostsById, baseURL } from "../Api";
 // import assets
-import defaultProfile from "../Images/profile.png";
+import profile from "../Images/profile.png";
+// import Components
+import DetailPageLoad from "../Components/Load/DetailPageLoad";
+import ButtonFollow from "../Components/Mikro/ButtonFollow";
 
 function DetailPostPage() {
   const { id } = useParams();
-  const { data } = useQuery([`post-${id}`, id], getPostsById);
+  const { data, isLoading } = useQuery([`post-${id}`, id], getPostsById);
   const [mainImage, setMainImage] = useState(data ? data.photo[0].image : null);
   return (
     <>
-      {data && (
+      {data ? (
         <div className=" sm:px-20 md:px-40 lg:px-80 xl:px-80 mb-16">
           <div className="">
             <div className="flex justify-between">
@@ -21,7 +24,11 @@ function DetailPostPage() {
                 <div>
                   <Link to={`/user/${data.createdby.id}`}>
                     <img
-                      src={defaultProfile}
+                      src={
+                        data.createdby.profile.avatar !== "default"
+                          ? `${baseURL}${data.createdby.profile.avatar}`
+                          : profile
+                      }
                       alt="user-post-profile"
                       className="w-16 h-16 rounded-full border-2 border-primary object-cover"
                     />
@@ -35,12 +42,12 @@ function DetailPostPage() {
                 </div>
               </div>
               <div className="my-auto space-x-5">
-                <button className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold">
-                  Follow
-                </button>
-                <button className="min-w-100 bg-primary text-white rounded py-1 font-semibold">
-                  Hire
-                </button>
+                <ButtonFollow id={data.createdby.id} />
+                <Link to={`/hire/${data.createdby.id}`}>
+                  <button className="min-w-100 bg-primary text-white rounded py-1 font-semibold">
+                    Hire
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="w-full mt-6">
@@ -51,7 +58,7 @@ function DetailPostPage() {
                     : `${baseURL}${mainImage}`
                 }
                 alt="main-post"
-                className="w-full"
+                className="w-full rounded"
               />
             </div>
             <div className="flex flex-row justify-center space-x-4 mt-3">
@@ -78,7 +85,9 @@ function DetailPostPage() {
             </div>
           </div>
         </div>
-      )}
+      ) : isLoading ? (
+        <DetailPageLoad />
+      ) : null}
     </>
   );
 }

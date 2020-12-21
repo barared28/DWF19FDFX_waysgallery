@@ -12,12 +12,12 @@ function Dropdown({ children }) {
   };
   return (
     <div>
-      <button className="dropdown focus:outline-none">
+      <button className="dropdown focus:outline-none ">
         {children}
-        <div className="dropdown-menu hidden absolute mt-3 w-32 bg-white shadow-xl border rounded">
+        <div className="dropdown-menu hidden absolute mt-3 w-36 bg-white shadow-xl border rounded z-10">
           <div className="flex flex-col">
             <div
-              className="text-left px-3 py-2 hover:bg-gray-200 "
+              className="text-left px-4 py-3 hover:bg-gray-200 "
               onClick={() => router.push("/my-profile")}
             >
               <p className="font-medium">
@@ -25,7 +25,7 @@ function Dropdown({ children }) {
               </p>
             </div>
             <div
-              className="text-left px-3 py-2 hover:bg-gray-200"
+              className="text-left px-4 py-3 hover:bg-gray-200"
               onClick={() => router.push("/my-order")}
             >
               <p className="font-medium">
@@ -35,7 +35,7 @@ function Dropdown({ children }) {
             </div>
             <div className="border"></div>
             <div
-              className="text-left px-3 py-2 hover:bg-gray-200"
+              className="text-left px-4 py-3 hover:bg-gray-200"
               onClick={logout}
             >
               <p className="font-medium">

@@ -13,8 +13,11 @@ import EditProfilePage from "./Pages/EditProfilePage";
 import HiredPage from "./Pages/HiredPage";
 import SendProjectPage from "./Pages/SendProjectPage";
 import MyOrder from "./Pages/MyOrder";
+import ProjectPage from "./Pages/ProjectPage";
 // import functional
 import { reloadApi } from "./Api";
+// import Components
+import Loader from "./Components/Load/Loader";
 
 function App() {
   const { isSuccess: login, data, isFetching: loading } = useQuery(
@@ -27,9 +30,9 @@ function App() {
       <Router>
         <Switch>
           {loading && (
-            <>
-              <div>Loading</div>
-            </>
+            <div className="flex justify-center h-screen w-screen">
+              <Loader />
+            </div>
           )}
           {login && data ? (
             <>
@@ -42,6 +45,7 @@ function App() {
               <Route exact path="/edit-profile" component={EditProfilePage} />
               <Route exact path="/hire/:id" component={HiredPage} />
               <Route exact path="/my-order" component={MyOrder} />
+              <Route exact path="/project/:id" component={ProjectPage} />
               <Route
                 exact
                 path="/send-project/:id"

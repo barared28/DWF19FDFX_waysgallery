@@ -16,7 +16,7 @@ const setAuthToken = (token) => {
   }
 };
 // url file base
-export const baseURL = "http://localhost:5000/";
+export const baseURL = "http://localhost:5000/uploads/";
 //==== Auth ===== //
 
 export const loginApi = (body) => {
@@ -49,32 +49,49 @@ export const reloadApi = (key) => {
   return API.get(url).then((res) => res.data.data);
 };
 
-export const getPosts = () => {
+export const getPosts = ({ queryKey }) => {
+  const param = queryKey[1];
+  const { search, filter, limit = 10 } = param;
   const url = "/posts";
-  return API.get(url).then((res) => {
-    return res.data.data.posts.map((post) => {
-      const img = new Image();
-      if (!post.photo[0].image) {
-        return null;
-      }
-      img.src = `${baseURL}${post.photo[0].image}`;
-      if (!img.width && !img.height) {
+  return API.get(url).then(async (res) => {
+    const data = res.data.data.posts.filter(
+      ({ title }, index) =>
+        title.toUpperCase().includes(search.toUpperCase()) && index < limit
+    );
+    return Promise.all(
+      data.map(async (post) => {
+        const img = new Image();
+        if (!post.photo[0].image) {
+          return null;
+        }
+        img.src = `${baseURL}${post.photo[0].image}`;
+        await new Promise((resolve, reject) => {
+          img.onload = () => {
+            resolve();
+          };
+          setTimeout(() => {
+            reject();
+          }, 2000);
+        });
         return {
           src: `${baseURL}${post.photo[0].image}`,
           alt: post.id.toString(),
-          width: 2,
-          height: 2,
+          width: img.width,
+          height: img.height,
         };
-      }
-      return {
-        src: `${baseURL}${post.photo[0].image}`,
-        alt: post.id.toString(),
-        width: img.width,
-        height: img.height,
-      };
-    });
+      })
+    );
   });
 };
+
+// if (!img.width && !img.height) {
+//   return {
+//     src: `${baseURL}${post.photo[0].image}`,
+//     alt: post.id.toString(),
+//     width: 2,
+//     height: 2,
+//   };
+// }
 
 export const getPostsById = ({ queryKey }) => {
   const id = queryKey[1];
@@ -95,24 +112,22 @@ export const getProfileById = ({ queryKey }) => {
 
 export const uploadPost = (body) => {
   const url = "/post";
-  return API.post(url, body, {
+  const config = {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-  })
-    .then((res) => res)
-    .catch((err) => console.log(err));
+  };
+  return API.post(url, body, config);
 };
 
 export const uploadArt = (body) => {
   const url = "/upload-arts";
-  return API.post(url, body, {
+  const config = {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-  })
-    .then((res) => res)
-    .catch((err) => console.log(err));
+  };
+  return API.post(url, body, config);
 };
 
 export const editProfile = (body) => {
@@ -122,9 +137,7 @@ export const editProfile = (body) => {
       "Content-Type": "multipart/form-data",
     },
   };
-  return API.patch(url, body, config)
-    .then((res) => res)
-    .catch((err) => console.log(err));
+  return API.patch(url, body, config);
 };
 
 export const addHire = (body) => {
@@ -140,4 +153,37 @@ export const getMyOrder = () => {
 export const getMyOffer = () => {
   const url = "/my-offer";
   return API.get(url).then((res) => res.data.data.offer);
+};
+
+export const editStatusOrder = ({ id, status }) => {
+  const url = `/transaction/${id}`;
+  const body = { status };
+  return API.patch(url, body);
+};
+
+export const sendProject = ({ id, body }) => {
+  const url = `/send-project/${id}`;
+  const config = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
+  return API.post(url, body, config);
+};
+
+export const getProject = ({ queryKey }) => {
+  const id = queryKey[1];
+  const url = `/project/${id}`;
+  return API.get(url).then((res) => res.data.data.project);
+};
+
+export const getStatusFollow = ({ queryKey }) => {
+  const id = queryKey[1];
+  const url = `/follow/${id}`;
+  return API.get(url).then((res) => res.data.data.follow.value);
+};
+
+export const editStatusFollow = ({ id, body }) => {
+  const url = `/follow/${id}`;
+  return API.patch(url, body);
 };

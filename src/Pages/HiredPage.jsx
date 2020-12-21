@@ -18,7 +18,7 @@ function HiredPage() {
   const [endDate, setEndDate] = useState(new Date());
   const addHireMutation = useMutation(addHire, {
     onSuccess: (res) => {
-      console.log(res);
+      router.push("/my-order");
     },
   });
 

@@ -6,16 +6,19 @@ import { useQuery } from "react-query";
 import { getMyProfile, baseURL, getProfileById } from "../Api";
 // import assets
 import profileImage from "../Images/profile.png";
+// import Components
+import Loader from "../Components/Load/Loader";
+import ButtonFollow from "../Components/Mikro/ButtonFollow";
 
 function ProfilePage() {
   const { id } = useParams();
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     id ? [`user-${id}`, id] : "myProfile",
     id ? getProfileById : getMyProfile
   );
   return (
     <>
-      {data && (
+      {data ? (
         <div className="px-32 mb-16">
           <div className="flex justify-between">
             <div className="flex flex-col mt-10">
@@ -37,9 +40,7 @@ function ProfilePage() {
               <div className="mt-12">
                 {id ? (
                   <div className="flex flex-row space-x-5">
-                    <button className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold">
-                      Follow
-                    </button>
+                    <ButtonFollow id={id} />
                     <Link to={`/hire/${data.id}`}>
                       <button className="min-w-100 bg-primary text-white rounded py-1 font-semibold">
                         Hire
@@ -48,7 +49,7 @@ function ProfilePage() {
                   </div>
                 ) : (
                   <Link to="/edit-profile">
-                    <button className="px-5 bg-primary text-white rounded py-1 font-semibold">
+                    <button className="px-5 bg-primary hover:bg-bold text-white rounded py-1 font-semibold">
                       Edit Profile
                     </button>
                   </Link>
@@ -100,7 +101,11 @@ function ProfilePage() {
             </div>
           </div>
         </div>
-      )}
+      ) : isLoading ? (
+        <div className="flex justify-center h-screen w-screen">
+          <Loader />
+        </div>
+      ) : null}
     </>
   );
 }
