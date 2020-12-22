@@ -45,7 +45,7 @@ function SendProjectPage() {
             />
             <div className="space-x-5 flex justify-center mt-12">
               <button
-                className="min-w-100 bg-primary text-white rounded py-1 px-2 font-semibold"
+                className="min-w-100 bg-primary hover:bg-bold text-white rounded py-1 px-2 font-semibold"
                 onClick={(e) => handleSend(e)}
               >
                 Send Project

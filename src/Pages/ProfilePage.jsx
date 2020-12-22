@@ -64,15 +64,18 @@ function ProfilePage() {
                   </div>
                 </div>
               ) : (
-                <div className="w-full">
-                  <Link to={`/post/${data.post[0].id}`}>
-                    <img
-                      src={`${baseURL}${data.post[0].photo[0].image}`}
-                      className="w-full"
-                      alt="post-user"
-                    />
-                  </Link>
-                </div>
+                <>
+                  <div className="w-full z-20">
+                    <Link to={`/post/${data.post[0].id}`}>
+                      <img
+                        src={`${baseURL}${data.post[0].photo[0].image}`}
+                        className="w-full rounded"
+                        alt="post-user"
+                      />
+                    </Link>
+                  </div>
+                  <div className="absolute bg-primary w-96 h-96 top-28 right-0 z-0"></div>
+                </>
               )}
             </div>
           </div>

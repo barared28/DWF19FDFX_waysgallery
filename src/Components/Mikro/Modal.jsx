@@ -24,8 +24,8 @@ function Modal({ show, close, children, shadow = true, popup = false }) {
       id="close"
     >
       <div
-        className={`bg-white place-self-center px-12 py-4 rounded ${
-          !shadow && "border-2 border-gray-500 shadow-2xl"
+        className={`bg-white place-self-center px-12 py-4 rounded overflow-auto ${
+          !shadow && "border-2 border-primary shadow-2xl"
         }`}
       >
         {children}

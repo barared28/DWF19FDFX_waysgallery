@@ -14,7 +14,7 @@ function Dropdown({ children }) {
     <div>
       <button className="dropdown focus:outline-none ">
         {children}
-        <div className="dropdown-menu hidden absolute mt-3 w-36 bg-white shadow-xl border rounded z-10">
+        <div className="dropdown-menu hidden absolute mt-3 w-36 bg-white shadow-xl border rounded z-40">
           <div className="flex flex-col">
             <div
               className="text-left px-4 py-3 hover:bg-gray-200 "

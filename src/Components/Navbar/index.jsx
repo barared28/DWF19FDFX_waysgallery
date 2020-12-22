@@ -13,7 +13,7 @@ function Navbar() {
   const cache = useQueryClient();
   const data = cache.getQueryData("user");
   return (
-    <div className="flex justify-between px-32 py-3 border-b-2 mb-6">
+    <div className="flex justify-between px-32 py-3 border-b-2 mb-6 ">
       <div>
         <div>
           <Link to="/">

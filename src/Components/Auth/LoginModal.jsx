@@ -1,5 +1,5 @@
 // import moduls
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 // import components
 import Modal from "../Mikro/Modal";
@@ -8,6 +8,7 @@ import { loginApi } from "../../Api/index";
 
 function LoginModal({ show, setShow }) {
   const query = useQueryClient();
+  const [showAlert, setShowAlert] = useState(false);
   const email = useRef();
   const password = useRef();
 
@@ -15,6 +16,12 @@ function LoginModal({ show, setShow }) {
     onSettled: (data, error) => {
       if (data) {
         query.invalidateQueries("user");
+      }
+      if (error) {
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 2000);
       }
     },
   });
@@ -38,6 +45,11 @@ function LoginModal({ show, setShow }) {
           <div>
             <h1 className="my-6 text-4xl font-black text-primary">Login</h1>
             <form className="flex space-y-4 flex-col">
+              {showAlert && (
+                <div className="bg-red-400 px-4 py-2 rounded">
+                  <h4 className="text-white font-bold ">Something Wrong</h4>
+                </div>
+              )}
               <input
                 type="text"
                 name="email"

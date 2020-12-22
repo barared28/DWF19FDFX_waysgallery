@@ -67,6 +67,28 @@ const Content = ({ data, index, setShow, setContent }) => {
         <h4 className="text-xl text-green-400 mt-5">
           Price : {formatingCurency(data.price)}
         </h4>
+        {data.status === "Project Finish" && (
+          <div className="flex justify-end space-x-4 mt-5">
+            <button
+              className="bg-red-400 hover:bg-red-500 px-2 py-1 rounded text-white font-semibold"
+              onClick={() => {
+                handleEdit("Rejected");
+                setShow(false);
+              }}
+            >
+              Rejected
+            </button>
+            <button
+              className="bg-green-400 hover:bg-green-500 px-2 py-1 rounded text-white font-semibold"
+              onClick={() => {
+                handleEdit("Completed");
+                setShow(false);
+              }}
+            >
+              Approve
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -133,18 +155,11 @@ const Content = ({ data, index, setShow, setContent }) => {
           </div>
         ) : data.status === "Project Finish" ? (
           <div className="flex justify-center space-x-3">
-            <button
-              className="bg-red-400 hover:bg-red-500 px-2 py-1 rounded text-white font-semibold"
-              onClick={() => handleEdit("Rejected")}
-            >
-              Cancel
-            </button>
-            <button
-              className="bg-green-400 hover:bg-green-500 px-2 py-1 rounded text-white font-semibold"
-              onClick={() => handleEdit("Completed")}
-            >
-              Approve
-            </button>
+            <Link to={`/project/${data.project.id}`}>
+              <button className="bg-green-400 hover:bg-green-500 px-2 py-1 rounded text-white font-semibold">
+                View Project
+              </button>
+            </Link>
           </div>
         ) : (
           <div className="flex justify-center">

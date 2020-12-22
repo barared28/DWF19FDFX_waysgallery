@@ -51,7 +51,7 @@ function App() {
                 path="/send-project/:id"
                 component={SendProjectPage}
               />
-              <ReactQueryDevtools />
+              {/* <ReactQueryDevtools /> */}
             </>
           ) : (
             <>

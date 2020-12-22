@@ -1,6 +1,7 @@
 // import modules
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { useHistory } from "react-router-dom";
 // import components
 import DropzoneUpload from "../Components/Upload/DropzoneUpload";
 import Modal from "../Components/Mikro/Modal";
@@ -10,7 +11,9 @@ import { uploadArt, editProfile } from "../Api";
 
 function EditProfilePage() {
   const [files, setFiles] = useState([]);
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+  const router = useHistory();
   const fullName = useRef();
   const greeting = useRef();
   const avatar = useRef();
@@ -19,11 +22,12 @@ function EditProfilePage() {
   const uploadArtMutation = useMutation(uploadArt, {
     onSuccess: () => {
       setShowAlert(false);
+      router.push("/my-profile");
     },
   });
   const editProfileMutation = useMutation(editProfile, {
     onSuccess: (res) => {
-      console.log(res);
+      router.push("/my-profile");
     },
   });
 
@@ -68,10 +72,14 @@ function EditProfilePage() {
           <form className="w-full mt-6 flex flex-col">
             <label htmlFor="file" className="cursor-pointer self-center">
               <div className="w-48 h-48 rounded-full border-4 border-dashed hover:border-gray-500 flex justify-center">
-                <i
-                  className="fa fa-camera my-auto fa-4x  text-gray-400"
-                  aria-hidden="true"
-                ></i>
+                {avatarPreview === null ? (
+                  <i
+                    className="fa fa-camera my-auto fa-4x  text-gray-400"
+                    aria-hidden="true"
+                  ></i>
+                ) : (
+                  <img src={URL.createObjectURL(avatarPreview)} className="w-48 h-48 rounded-full self-center  object-cover" />
+                )}
               </div>
               <input
                 type="file"
@@ -79,6 +87,7 @@ function EditProfilePage() {
                 id="file"
                 name="photo"
                 ref={avatar}
+                onChange={(e) => setAvatarPreview(e.target.files[0])}
               />
             </label>
 
