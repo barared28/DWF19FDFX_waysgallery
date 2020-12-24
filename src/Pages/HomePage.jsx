@@ -1,6 +1,6 @@
 // import modules
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Gallery from "react-photo-gallery";
 import { useHistory } from "react-router-dom";
 // import functional
@@ -9,15 +9,17 @@ import { getPosts } from "../Api";
 import SkeletonBox from "../Components/Load/SkeletonBox";
 
 function HomePage() {
+  const cache = useQueryClient();
   const [filter, setFilter] = useState("Latest");
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
-  const { data, isLoading, isFetching } = useQuery(
+  const { data, isLoading, isFetching, isError } = useQuery(
     ["posts", { search, filter, limit }],
     getPosts,
     {
       refetchOnWindowFocus: false,
-      keepPreviousData: true,
+      retry: 1,
+      retryDelay: 1,
     }
   );
   const router = useHistory();
@@ -32,12 +34,16 @@ function HomePage() {
             <select
               id="filter"
               className="bg-gray-200 px-3 py-1 rounded focus:outline-none cursor-pointer hover:bg-gray-300"
-              onChange={(e) => setFilter(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value === "Followed") {
+                  cache.removeQueries("posts");
+                }
+                setFilter(e.target.value);
+              }}
             >
               <option value="Latest" defaultValue>
                 Latest
               </option>
-              <option value="Today">Today</option>
               <option value="Followed">Followed</option>
             </select>
           </div>
@@ -59,12 +65,12 @@ function HomePage() {
         </div>
         <div className="mt-10">
           <h2 className="font-semibold">
-            {search !== "" ? null : filter} Post
+            {search !== "" ? `Results "${search}"` : filter} Post
           </h2>
         </div>
       </div>
       <div className="px-20 my-12">
-        {data && data.length > 1 ? (
+        {data && data.length > 1 && data !== null ? (
           <>
             <Gallery
               photos={data}
@@ -90,10 +96,17 @@ function HomePage() {
           </>
         ) : data && data.length === 1 ? (
           <>
-            <img src={data[0].src} alt="posts1" className="h-60" />
+            <img
+              src={data[0].src}
+              alt="posts1"
+              className="h-60"
+              onClick={() => handleClick(data[0].alt)}
+            />
           </>
         ) : isLoading ? (
           <SkeletonBox />
+        ) : isError ? (
+          <h1>Post Not Found</h1>
         ) : null}
       </div>
     </div>

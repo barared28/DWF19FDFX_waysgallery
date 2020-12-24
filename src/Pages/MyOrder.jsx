@@ -12,11 +12,13 @@ function MyOrder() {
   const [table, setTable] = useState("order");
   const { data: orderData, isLoading: loadingOrder } = useQuery(
     "my-order",
-    getMyOrder
+    getMyOrder,
+    { retry: 1, retryDelay: 1 }
   );
   const { data: offerData, isLoading: loadingOffer } = useQuery(
     "my-offer",
-    getMyOffer
+    getMyOffer,
+    { retry: 1, retryDelay: 1 }
   );
   return (
     <>
@@ -34,7 +36,7 @@ function MyOrder() {
           </select>
         </div>
         <div className="mt-16">
-          {table === "order" && orderData && <TableOrder data={orderData}/>}
+          {table === "order" && orderData && <TableOrder data={orderData} />}
           {table === "offer" && offerData && <TableOffer data={offerData} />}
           {loadingOrder && loadingOffer && (
             <div className="flex justify-center">

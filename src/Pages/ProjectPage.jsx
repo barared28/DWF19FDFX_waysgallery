@@ -64,6 +64,7 @@ function ProjectPage() {
                     : `${baseURL}${image}`
                 }
                 className="max-h-3/4 max-w-screen-lg"
+                alt="main-project"
               />
               <div className="flex justify-center mt-8">
                 <a

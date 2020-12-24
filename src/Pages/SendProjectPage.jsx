@@ -1,28 +1,40 @@
 // import modules
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import { useParams, useHistory } from "react-router-dom";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 // import Components
 import DropzoneUpload from "../Components/Upload/DropzoneUpload";
 import Modal from "../Components/Mikro/Modal";
 // import functional
 import { sendProject } from "../Api";
 
+// scema validation
+const projectValidation = Yup.object().shape({
+  description: Yup.string()
+    .min(10, "Too Short !!")
+    .required("Description Required"),
+});
+
+// main function
 function SendProjectPage() {
   const [files, setFiles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const { id } = useParams();
-  const description = useRef();
   const router = useHistory();
   const uploadMutation = useMutation(sendProject, {
     onSuccess: () => {
       setShowModal(true);
     },
   });
-  const handleSend = (e) => {
-    e.preventDefault();
+  const handleSend = (values) => {
+    if (!files || files === [] || files.length === 0) {
+      alert("Image Project is Required");
+      return;
+    }
     const body = new FormData();
-    body.append("description", description.current.value);
+    body.append("description", values.description);
     files.forEach((file) => {
       body.append("files", file);
     });
@@ -35,23 +47,36 @@ function SendProjectPage() {
           <DropzoneUpload files={files} setFiles={setFiles} />
         </div>
         <div className="w-2/5 px-10">
-          <form className="w-full">
-            <textarea
-              placeholder="Description"
-              name="description"
-              rows="5"
-              className="py-2 px-4 w-full border-2 border-primary rounded"
-              ref={description}
-            />
-            <div className="space-x-5 flex justify-center mt-12">
-              <button
-                className="min-w-100 bg-primary hover:bg-bold text-white rounded py-1 px-2 font-semibold"
-                onClick={(e) => handleSend(e)}
-              >
-                Send Project
-              </button>
-            </div>
-          </form>
+          <Formik
+            initialValues={{ description: "" }}
+            validationSchema={projectValidation}
+            onSubmit={(values) => handleSend(values)}
+          >
+            {({ errors, touched }) => (
+              <Form className="w-full">
+                {errors.description && touched.description && (
+                  <p className="text-sm text-red-400 font-semibold">
+                    {errors.description}
+                  </p>
+                )}
+                <Field
+                  name="description"
+                  as="textarea"
+                  rows="5"
+                  placeholder="Description"
+                  className="py-2 px-4 w-full border-2 border-primary rounded"
+                />
+                <div className="space-x-5 flex justify-center mt-12">
+                  <button
+                    className="min-w-100 bg-primary hover:bg-bold text-white rounded py-1 px-2 font-semibold"
+                    type="submit"
+                  >
+                    Send Project
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
 

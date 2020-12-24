@@ -1,31 +1,43 @@
 // import modules
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import { useHistory } from "react-router-dom";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 // import components
 import DropzoneUpload from "../Components/Upload/DropzoneUpload";
 import Modal from "../Components/Mikro/Modal";
 // import functional
 import { uploadPost } from "../Api";
 
+// scema validation
+const postValidation = Yup.object().shape({
+  title: Yup.string().min(6, "Too Short !!").required("Title Required"),
+  description: Yup.string()
+    .min(10, "Too Short !!")
+    .required("Description Required"),
+});
+
+// main function
 function UploadPostPage() {
   const [files, setFiles] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const title = useRef();
-  const description = useRef();
   const router = useHistory();
 
   const uploadMutation = useMutation(uploadPost, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       setShowModal(true);
     },
   });
 
-  const handleUpload = (e) => {
-    e.preventDefault();
+  const handleUpload = (values) => {
+    if (!files || files === [] || files.length === 0) {
+      alert("Image Post is Required");
+      return;
+    }
     const body = new FormData();
-    body.append("title", title.current.value);
-    body.append("description", description.current.value);
+    body.append("title", values.title);
+    body.append("description", values.description);
     files.forEach((file) => {
       body.append("photos", file);
     });
@@ -39,33 +51,52 @@ function UploadPostPage() {
           <DropzoneUpload files={files} setFiles={setFiles} />
         </div>
         <div className="w-2/5 px-10">
-          <form className="w-full mt-6">
-            <input
-              type="text"
-              placeholder="Title"
-              name="title"
-              className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
-              ref={title}
-            />
-            <textarea
-              placeholder="Description"
-              name="description"
-              rows="5"
-              className="py-2 px-4 w-full border-2 border-primary rounded mt-8 bg-gray-200"
-              ref={description}
-            />
-            <div className="space-x-5 flex justify-center mt-12">
-              <button className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold">
-                Cancel
-              </button>
-              <button
-                className="min-w-100 bg-primary text-white rounded py-1 font-semibold"
-                onClick={(e) => handleUpload(e)}
-              >
-                Upload
-              </button>
-            </div>
-          </form>
+          <Formik
+            initialValues={{ title: "", description: "" }}
+            validationSchema={postValidation}
+            onSubmit={(values) => handleUpload(values)}
+          >
+            {({ errors, touched }) => (
+              <Form className="w-full mt-6">
+                {errors.title && touched.title && (
+                  <p className="text-sm text-red-400 font-semibold">
+                    {errors.title}
+                  </p>
+                )}
+                <Field
+                  name="title"
+                  placeholder="Title"
+                  className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200 mb-8"
+                />
+                {errors.description && touched.description && (
+                  <p className="text-sm text-red-400 font-semibold">
+                    {errors.description}
+                  </p>
+                )}
+                <Field
+                  name="description"
+                  as="textarea"
+                  rows="6"
+                  placeholder="Description"
+                  className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
+                />
+                <div className="space-x-5 flex justify-center mt-12">
+                  <button
+                    className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold"
+                    onClick={() => router.push("/")}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="min-w-100 bg-primary text-white rounded py-1 font-semibold"
+                    type="submit"
+                  >
+                    Upload
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
 
@@ -75,7 +106,7 @@ function UploadPostPage() {
             show={showModal}
             close={() => {
               setShowModal(false);
-              router.push("/")
+              router.push("/");
             }}
             shadow={false}
           >

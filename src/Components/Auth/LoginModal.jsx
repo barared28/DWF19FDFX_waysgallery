@@ -1,16 +1,23 @@
 // import moduls
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
 // import components
 import Modal from "../Mikro/Modal";
 // import functional
 import { loginApi } from "../../Api/index";
 
+// scema validation
+const loginScema = Yup.object().shape({
+  email: Yup.string().email("Invalid Email").required("Email Required"),
+  password: Yup.string().min(8, "Too Short !!").required("Password Required"),
+});
+
+// main function
 function LoginModal({ show, setShow }) {
-  const query = useQueryClient();
   const [showAlert, setShowAlert] = useState(false);
-  const email = useRef();
-  const password = useRef();
+  const query = useQueryClient();
 
   const loginMutate = useMutation(loginApi, {
     onSettled: (data, error) => {
@@ -26,11 +33,10 @@ function LoginModal({ show, setShow }) {
     },
   });
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const handleLogin = (values) => {
     const body = {
-      email: email.current.value,
-      password: password.current.value,
+      email: values.email,
+      password: values.password,
     };
     loginMutate.mutate(body);
   };
@@ -44,44 +50,63 @@ function LoginModal({ show, setShow }) {
         >
           <div>
             <h1 className="my-6 text-4xl font-black text-primary">Login</h1>
-            <form className="flex space-y-4 flex-col">
-              {showAlert && (
-                <div className="bg-red-400 px-4 py-2 rounded">
-                  <h4 className="text-white font-bold ">Something Wrong</h4>
-                </div>
-              )}
-              <input
-                type="text"
-                name="email"
-                placeholder="Email"
-                className="w-64 bg-gray-200 rounded px-4 py-2 border-2 border-primary"
-                ref={email}
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                className="w-64 bg-gray-200 rounded px-4 py-2 border-2 border-primary"
-                ref={password}
-              />
-              <div>
-                <button
-                  onClick={(e) => handleLogin(e)}
-                  className="bg-primary w-full py-2 rounded mt-3 text-white font-semibold"
-                >
-                  Login
-                </button>
-                <p className="text-center my-4">
-                  Don't have an account ?{" "}
-                  <button
-                    className="font-bold focus:outline-none"
-                    onClick={() => setShow({ login: false, register: true })}
-                  >
-                    Klik Here
-                  </button>
-                </p>
+
+            {showAlert && (
+              <div className="bg-red-400 px-4 py-2 mb-4 rounded">
+                <h4 className="text-white font-bold ">Something Wrong</h4>
               </div>
-            </form>
+            )}
+            
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validationSchema={loginScema}
+              onSubmit={(values) => handleLogin(values)}
+            >
+              {({ errors, touched }) => (
+                <Form className="flex flex-col">
+                  {errors.email && touched.email && (
+                    <p className="text-sm text-red-400 font-semibold">
+                      {errors.email}
+                    </p>
+                  )}
+                  <Field
+                    name="email"
+                    className="w-64 bg-gray-200 rounded px-4 py-2 border-2 border-primary mb-4"
+                    placeholder="Email"
+                  />
+                  {errors.password && touched.password && (
+                    <p className="text-sm text-red-400 font-semibold">
+                      {errors.password}
+                    </p>
+                  )}
+                  <Field
+                    name="password"
+                    className="w-64 bg-gray-200 rounded px-4 py-2 border-2 border-primary mb-4"
+                    placeholder="Password"
+                    type="password"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-primary w-full py-2 rounded mt-3 text-white font-semibold"
+                  >
+                    Login
+                  </button>
+                  <div>
+                    <p className="text-center my-4">
+                      Don't have an account ?{" "}
+                      <button
+                        className="font-bold focus:outline-none"
+                        onClick={() =>
+                          setShow({ login: false, register: true })
+                        }
+                      >
+                        Klik Here
+                      </button>
+                    </p>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
         </Modal>
       )}

@@ -51,13 +51,17 @@ export const reloadApi = (key) => {
 
 export const getPosts = ({ queryKey }) => {
   const param = queryKey[1];
-  const { search, filter, limit = 10 } = param;
-  const url = "/posts";
+  const { search, limit = 10, filter } = param;
+  const url = filter === "Followed" ? "/posts/followed" : "/posts";
   return API.get(url).then(async (res) => {
+    if (res.data.data === {} || !res.data.data) {
+      return null;
+    }
     const data = res.data.data.posts.filter(
       ({ title }, index) =>
         title.toUpperCase().includes(search.toUpperCase()) && index < limit
     );
+    console.log(data);
     return Promise.all(
       data.map(async (post) => {
         const img = new Image();
@@ -83,15 +87,6 @@ export const getPosts = ({ queryKey }) => {
     );
   });
 };
-
-// if (!img.width && !img.height) {
-//   return {
-//     src: `${baseURL}${post.photo[0].image}`,
-//     alt: post.id.toString(),
-//     width: 2,
-//     height: 2,
-//   };
-// }
 
 export const getPostsById = ({ queryKey }) => {
   const id = queryKey[1];

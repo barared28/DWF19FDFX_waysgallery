@@ -1,8 +1,9 @@
 // import modules
-import { useState, useRef } from "react";
-import DatePicker from "react-datepicker";
+import { useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation } from "react-query";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 // import components
 import Modal from "../Components/Mikro/Modal";
 // import assets
@@ -10,15 +11,23 @@ import "react-datepicker/dist/react-datepicker.css";
 // import functional
 import { addHire } from "../Api";
 
+// scema validation
+const hireValidation = Yup.object().shape({
+  title: Yup.string().min(5, "Too Short !!").required("Title Required"),
+  description: Yup.string()
+    .min(10, "Too Short !!")
+    .required("Description Required"),
+  price: Yup.number().required("Price Required"),
+  startDate: Yup.date().required("Start Date Required"),
+  endDate: Yup.date().required("End Date Required"),
+});
+
+// main function
 function HiredPage() {
   const [showModal, setShowModal] = useState(false);
   const { id } = useParams();
-  const title = useRef();
-  const description = useRef();
-  const price = useRef();
   const router = useHistory();
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+
   const addHireMutation = useMutation(addHire, {
     onSuccess: () => {
       setShowModal(true);
@@ -31,13 +40,13 @@ function HiredPage() {
     return jsonDate;
   };
 
-  const hadleBidding = () => {
+  const hadleBidding = (values) => {
     const body = {
-      title: title.current.value,
-      description: description.current.value,
-      price: price.current.value,
-      startDate: dateJson(startDate),
-      endDate: dateJson(endDate),
+      title: values.title,
+      description: values.description,
+      price: values.price,
+      startDate: dateJson(values.startDate),
+      endDate: dateJson(values.endDate),
       orderTo: id,
     };
     addHireMutation.mutate(body);
@@ -46,55 +55,109 @@ function HiredPage() {
   return (
     <>
       <div className="sm:px-20 md:px-40 lg:px-80 xl:px-80 mb-16">
-        <form className="space-y-6">
-          <input
-            type="text"
-            placeholder="Title"
-            name="title"
-            className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
-            ref={title}
-          />
-          <textarea
-            placeholder="Description"
-            name="description"
-            rows="5"
-            className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
-            ref={description}
-          />
-          <div className="w-full flex justify-between">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              customInput={<CustomStart />}
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              customInput={<CustomEnd />}
-            />
-          </div>
-          <input
-            type="number"
-            placeholder="Price"
-            name="price"
-            className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
-            ref={price}
-          />
-        </form>
-        <div className="flex flex-row space-x-5 justify-center mt-20">
-          <button
-            className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold"
-            onClick={() => router.push(`/user/${id}`)}
-          >
-            Cancel
-          </button>
-          <button
-            className="min-w-100 bg-primary text-white rounded py-1 font-semibold"
-            onClick={hadleBidding}
-          >
-            Bidding
-          </button>
-        </div>
+        <Formik
+          initialValues={{
+            title: "",
+            description: "",
+            price: "",
+            startDate: "",
+            endDate: "",
+          }}
+          validationSchema={hireValidation}
+          onSubmit={(values) => hadleBidding(values)}
+        >
+          {({ errors, touched }) => (
+            <Form className="flex flex-col">
+              {errors.title && touched.title && (
+                <p className="text-sm text-red-400 font-semibold">
+                  {errors.title}
+                </p>
+              )}
+              <Field
+                name="title"
+                placeholder="Title"
+                className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200 mb-6"
+              />
+              {errors.description && touched.description && (
+                <p className="text-sm text-red-400 font-semibold">
+                  {errors.description}
+                </p>
+              )}
+              <Field
+                name="description"
+                placeholder="Description"
+                className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200 mb-6"
+                as="textarea"
+                rows="5"
+              />
+              <div className="flex justify-between mb-6">
+                <div>
+                  {errors.startDate && touched.startDate && (
+                    <p className="text-sm text-red-400 font-semibold">
+                      {errors.startDate}
+                    </p>
+                  )}
+                  <label
+                    htmlFor="startDate"
+                    className="text-base font-semibold text-gray-400"
+                  >
+                    Start Date :
+                  </label>
+                  <Field
+                    name="startDate"
+                    id="startDate"
+                    className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
+                    type="date"
+                  />
+                </div>
+                <div>
+                  {errors.endDate && touched.endDate && (
+                    <p className="text-sm text-red-400 font-semibold">
+                      {errors.endDate}
+                    </p>
+                  )}
+                  <label
+                    htmlFor="endDate"
+                    className="text-base font-semibold text-gray-400"
+                  >
+                    End Date :
+                  </label>
+                  <Field
+                    name="endDate"
+                    id="endDate"
+                    className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200"
+                    type="date"
+                  />
+                </div>
+              </div>
+              {errors.price && touched.price && (
+                <p className="text-sm text-red-400 font-semibold">
+                  {errors.price}
+                </p>
+              )}
+              <Field
+                name="price"
+                placeholder="Price"
+                type="number"
+                className="py-2 px-4 w-full border-2 border-primary rounded bg-gray-200 mb-6"
+              />
+              <div className="mt-6 flex justify-center space-x-4">
+                <button
+                  className="min-w-100 bg-gray-300 text-black rounded py-1 font-semibold"
+                  onClick={() => router.push(`/user/${id}`)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="min-w-100 bg-primary text-white rounded py-1 font-semibold"
+                  type="submit"
+                >
+                  Bidding
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
 
       {showModal && (
@@ -117,31 +180,5 @@ function HiredPage() {
     </>
   );
 }
-
-const CustomStart = ({ value, onClick }) => (
-  <div
-    className="py-2 px-4 w-64 border-2 border-primary rounded flex justify-between bg-gray-200 cursor-pointer"
-    onClick={onClick}
-  >
-    <p>Start : {value}</p>
-    <i
-      className="fa fa-calendar self-center fa-lg text-gray-400"
-      aria-hidden="true"
-    ></i>
-  </div>
-);
-
-const CustomEnd = ({ value, onClick }) => (
-  <div
-    className="py-2 px-4 w-64 border-2 border-primary rounded flex justify-between bg-gray-200 cursor-pointer"
-    onClick={onClick}
-  >
-    <p>End : {value}</p>
-    <i
-      className="fa fa-calendar self-center fa-lg text-gray-400"
-      aria-hidden="true"
-    ></i>
-  </div>
-);
 
 export default HiredPage;
