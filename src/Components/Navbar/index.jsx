@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
 // import Components
 import Dropdown from "./Dropdown";
-import { baseURL } from "../../Api";
 // import assets
 import profile from "../../Images/profile.png";
 import logo from "../../Images/logo.png";
@@ -34,7 +33,7 @@ function Navbar() {
             <img
               src={
                 data.profile.avatar !== "default"
-                  ? `${baseURL}${data.profile.avatar}`
+                  ? data.profile.avatar
                   : profile
               }
               alt="profile"

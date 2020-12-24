@@ -7,6 +7,7 @@ import * as Yup from "yup";
 // import Components
 import DropzoneUpload from "../Components/Upload/DropzoneUpload";
 import Modal from "../Components/Mikro/Modal";
+import UploadLoader from "../Components/Load/UploadLoader";
 // import functional
 import { sendProject } from "../Api";
 
@@ -21,10 +22,12 @@ const projectValidation = Yup.object().shape({
 function SendProjectPage() {
   const [files, setFiles] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [loader, setLoader] = useState(false);
   const { id } = useParams();
   const router = useHistory();
   const uploadMutation = useMutation(sendProject, {
     onSuccess: () => {
+      setLoader(false);
       setShowModal(true);
     },
   });
@@ -36,8 +39,9 @@ function SendProjectPage() {
     const body = new FormData();
     body.append("description", values.description);
     files.forEach((file) => {
-      body.append("files", file);
+      body.append("images", file);
     });
+    setLoader(true);
     uploadMutation.mutate({ id, body });
   };
   return (
@@ -103,6 +107,7 @@ function SendProjectPage() {
           </Modal>
         </>
       )}
+      {loader && <UploadLoader />}
     </>
   );
 }

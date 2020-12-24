@@ -2,8 +2,9 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "react-query";
+import Gallery from "react-photo-gallery";
 // import functional
-import { getMyProfile, baseURL, getProfileById } from "../Api";
+import { getMyProfile, getProfileById } from "../Api";
 // import assets
 import profileImage from "../Images/profile.png";
 // import Components
@@ -27,7 +28,7 @@ function ProfilePage() {
                   src={
                     data.profile.avatar === "default"
                       ? profileImage
-                      : `${baseURL}${data.profile.avatar}`
+                      : data.profile.avatar
                   }
                   alt="profile"
                   className="w-32 h-32 rounded-full border-2 border-primary object-cover"
@@ -68,7 +69,7 @@ function ProfilePage() {
                   <div className="w-full z-20">
                     <Link to={`/post/${data.post[0].id}`}>
                       <img
-                        src={`${baseURL}${data.post[0].photo[0].image}`}
+                        src={data.post[0].photo[0].image}
                         className="w-full rounded"
                         alt="post-user"
                       />
@@ -90,16 +91,18 @@ function ProfilePage() {
                     <h4 className="text-4xl">Not Have Art</h4>
                   </div>
                 </div>
-              ) : (
+              ) : data.art.length < 4 ? (
                 <div className="grid grid-flow-col gap-4">
                   {data.art.map((art) => {
                     return (
                       <div>
-                        <img src={`${baseURL}${art.image}`} alt={art.id} />
+                        <img src={art.image} alt={art.id} />
                       </div>
                     );
                   })}
                 </div>
+              ) : (
+                <GalleryArt data={data.art} />
               )}
             </div>
           </div>
@@ -112,5 +115,17 @@ function ProfilePage() {
     </>
   );
 }
+
+const GalleryArt = ({ data }) => {
+  const art = data.map((art) => {
+    return {
+      src: art.image,
+      alt: art.id.toString(),
+      width: art.width,
+      height: art.height,
+    };
+  });
+  return <Gallery photos={art} margin={5} />;
+};
 
 export default ProfilePage;

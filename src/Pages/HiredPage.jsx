@@ -6,6 +6,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 // import components
 import Modal from "../Components/Mikro/Modal";
+import UploadLoader from "../Components/Load/UploadLoader";
 // import assets
 import "react-datepicker/dist/react-datepicker.css";
 // import functional
@@ -25,11 +26,13 @@ const hireValidation = Yup.object().shape({
 // main function
 function HiredPage() {
   const [showModal, setShowModal] = useState(false);
+  const [loader, setLoader] = useState(false);
   const { id } = useParams();
   const router = useHistory();
 
   const addHireMutation = useMutation(addHire, {
     onSuccess: () => {
+      setLoader(false);
       setShowModal(true);
     },
   });
@@ -49,6 +52,7 @@ function HiredPage() {
       endDate: dateJson(values.endDate),
       orderTo: id,
     };
+    setLoader(true);
     addHireMutation.mutate(body);
   };
 
@@ -177,6 +181,7 @@ function HiredPage() {
           </Modal>
         </>
       )}
+      {loader && <UploadLoader />}
     </>
   );
 }

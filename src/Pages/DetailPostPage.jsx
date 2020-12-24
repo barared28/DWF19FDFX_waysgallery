@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "react-query";
 // import functional
-import { getPostsById, baseURL } from "../Api";
+import { getPostsById } from "../Api";
 // import assets
 import profile from "../Images/profile.png";
 // import Components
@@ -26,7 +26,7 @@ function DetailPostPage() {
                     <img
                       src={
                         data.createdby.profile.avatar !== "default"
-                          ? `${baseURL}${data.createdby.profile.avatar}`
+                          ? data.createdby.profile.avatar
                           : profile
                       }
                       alt="user-post-profile"
@@ -52,11 +52,7 @@ function DetailPostPage() {
             </div>
             <div className="w-full mt-6">
               <img
-                src={
-                  mainImage === null
-                    ? `${baseURL}${data.photo[0].image}`
-                    : `${baseURL}${mainImage}`
-                }
+                src={mainImage === null ? data.photo[0].image : mainImage}
                 alt="main-post"
                 className="w-full rounded"
               />
@@ -66,7 +62,7 @@ function DetailPostPage() {
                 data.photo.map((photo) => {
                   return (
                     <img
-                      src={`${baseURL}${photo.image}`}
+                      src={photo.image}
                       key={photo.id}
                       alt={photo.id}
                       className="w-32 h-24 object-cover rounded cursor-pointer border-2 border-primary opacity-80 hover:opacity-100"

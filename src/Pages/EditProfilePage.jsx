@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import DropzoneUpload from "../Components/Upload/DropzoneUpload";
 import Modal from "../Components/Mikro/Modal";
 import PreviewBox from "../Components/Mikro/PreviewBox";
+import UploadLoader from "../Components/Load/UploadLoader";
 // import functional
 import { uploadArt, editProfile } from "../Api";
 
@@ -25,17 +26,20 @@ function EditProfilePage() {
   const [files, setFiles] = useState([]);
   const [avatar, setAvatar] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+  const [loader, setLoader] = useState(false);
   const router = useHistory();
   const dataCache = useQueryClient();
   const dataUser = dataCache.getQueryData("user");
   const uploadArtMutation = useMutation(uploadArt, {
     onSuccess: () => {
+      setLoader(false);
       setShowAlert(false);
       router.push("/my-profile");
     },
   });
   const editProfileMutation = useMutation(editProfile, {
     onSuccess: () => {
+      setLoader(false);
       router.push("/my-profile");
       dataCache.invalidateQueries("user");
     },
@@ -54,8 +58,9 @@ function EditProfilePage() {
   const handleUpload = () => {
     const body = new FormData();
     files.forEach((file) => {
-      body.append("image", file);
+      body.append("images", file);
     });
+    setLoader(true);
     uploadArtMutation.mutate(body);
   };
 
@@ -65,9 +70,10 @@ function EditProfilePage() {
       return;
     }
     const body = new FormData();
-    body.append("avatar", avatar);
+    body.append("images", avatar);
     body.append("fullName", values.fullName);
     body.append("greeting", values.greeting);
+    setLoader(true);
     editProfileMutation.mutate(body);
   };
 
@@ -184,6 +190,7 @@ function EditProfilePage() {
           </div>
         </Modal>
       )}
+      {loader && <UploadLoader />}
     </>
   );
 }

@@ -53,7 +53,7 @@ export const getPosts = ({ queryKey }) => {
   const param = queryKey[1];
   const { search, limit = 10, filter } = param;
   const url = filter === "Followed" ? "/posts/followed" : "/posts";
-  return API.get(url).then(async (res) => {
+  return API.get(url).then((res) => {
     if (res.data.data === {} || !res.data.data) {
       return null;
     }
@@ -61,30 +61,14 @@ export const getPosts = ({ queryKey }) => {
       ({ title }, index) =>
         title.toUpperCase().includes(search.toUpperCase()) && index < limit
     );
-    console.log(data);
-    return Promise.all(
-      data.map(async (post) => {
-        const img = new Image();
-        if (!post.photo[0].image) {
-          return null;
-        }
-        img.src = `${baseURL}${post.photo[0].image}`;
-        await new Promise((resolve, reject) => {
-          img.onload = () => {
-            resolve();
-          };
-          setTimeout(() => {
-            reject();
-          }, 2000);
-        });
-        return {
-          src: `${baseURL}${post.photo[0].image}`,
-          alt: post.id.toString(),
-          width: img.width,
-          height: img.height,
-        };
-      })
-    );
+    return data.map((post) => {
+      return {
+        src: post.photo[0].image,
+        alt: post.id.toString(),
+        width: post.photo[0].width,
+        height: post.photo[0].height,
+      };
+    });
   });
 };
 

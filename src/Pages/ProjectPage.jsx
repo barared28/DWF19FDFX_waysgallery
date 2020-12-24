@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 // import components
 import Modal from "../Components/Mikro/Modal";
 // import functional
-import { getProject, baseURL } from "../Api";
+import { getProject } from "../Api";
 
 function ProjectPage() {
   const [showModal, setShowModal] = useState(false);
@@ -19,11 +19,7 @@ function ProjectPage() {
           <div className="w-1/2 flex flex-col">
             <div className="w-full">
               <img
-                src={
-                  image === null
-                    ? `${baseURL}${data.file[0].fileName}`
-                    : `${baseURL}${image}`
-                }
+                src={image === null ? data.file[0].fileName : image}
                 alt="mainImage"
                 className="w-full rounded"
                 onClick={() => setShowModal(true)}
@@ -34,7 +30,7 @@ function ProjectPage() {
                 return (
                   <img
                     className="w-1/4 object-cover border-2 border-primary rounded opacity-80 hover:opacity-100"
-                    src={`${baseURL}${file.fileName}`}
+                    src={file.fileName}
                     alt={file.id}
                     onClick={() => setImage(file.fileName)}
                     key={file.id}
@@ -58,21 +54,13 @@ function ProjectPage() {
           >
             <div className="flex flex-col justify-center m-4 overflow-auto">
               <img
-                src={
-                  image === null
-                    ? `${baseURL}${data.file[0].fileName}`
-                    : `${baseURL}${image}`
-                }
+                src={image === null ? data.file[0].fileName : image}
                 className="max-h-3/4 max-w-screen-lg"
                 alt="main-project"
               />
               <div className="flex justify-center mt-8">
                 <a
-                  href={
-                    image === null
-                      ? `${baseURL}${data.file[0].fileName}`
-                      : `${baseURL}${image}`
-                  }
+                  href={image === null ? data.file[0].fileName : image}
                   download="file-project"
                   className="min-w-100 text-center bg-primary hover:bg-bold text-white rounded py-1 px-2 font-semibold focus:outline-none"
                 >

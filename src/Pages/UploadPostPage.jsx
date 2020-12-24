@@ -7,6 +7,7 @@ import * as Yup from "yup";
 // import components
 import DropzoneUpload from "../Components/Upload/DropzoneUpload";
 import Modal from "../Components/Mikro/Modal";
+import UploadLoader from "../Components/Load/UploadLoader";
 // import functional
 import { uploadPost } from "../Api";
 
@@ -21,11 +22,13 @@ const postValidation = Yup.object().shape({
 // main function
 function UploadPostPage() {
   const [files, setFiles] = useState([]);
+  const [loader, setLoader] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const router = useHistory();
 
   const uploadMutation = useMutation(uploadPost, {
     onSuccess: () => {
+      setLoader(false);
       setShowModal(true);
     },
   });
@@ -39,8 +42,9 @@ function UploadPostPage() {
     body.append("title", values.title);
     body.append("description", values.description);
     files.forEach((file) => {
-      body.append("photos", file);
+      body.append("images", file);
     });
+    setLoader(true);
     uploadMutation.mutate(body);
   };
 
@@ -124,6 +128,7 @@ function UploadPostPage() {
           </Modal>
         </>
       )}
+      {loader && <UploadLoader />}
     </>
   );
 }
