@@ -99,7 +99,7 @@ function HomePage() {
             <img
               src={data[0].src}
               alt="posts1"
-              className="h-60"
+              className="h-60 cursor-pointer"
               onClick={() => handleClick(data[0].alt)}
             />
           </>
